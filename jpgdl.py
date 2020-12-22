@@ -48,8 +48,8 @@ class JPGDL:
         print(f"\n  Image has been successfully downloaded.\n\tSaved to => {output_file}")
 
 
-# this will only run when it is called from the command line
-if __name__ == '__main__':
+# this will run for the cli
+def cli():
     # Initiate the parser
     parser = argparse.ArgumentParser()
 
