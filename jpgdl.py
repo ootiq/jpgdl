@@ -10,9 +10,7 @@ from io import BytesIO
 class JPGDL:
     # MAIN DOWNLOADER FUNCTION
     @staticmethod
-    def jpeg_download(
-        download_url, filename, output_folder=os.getcwd(), print_log=True
-    ):
+    def download(download_url, filename, output_folder=os.getcwd(), print_log=True):
         """
         Download an IMAGE with a JPEG output.
 
@@ -66,9 +64,26 @@ class JPGDL:
             if print_log:
                 print("\n  Converting image to JPEG...")
 
-            image = Image.open(BytesIO(file.content)).convert("RGB")
-            image.save(output_file, "jpeg")  # save as jpeg
-        except Exception:
+            image = ""
+
+            # some .png images have transparency,
+            # replace the background with white color
+            # based from :> https://stackoverflow.com/questions/9166400/convert-rgba-png-to-rgb-with-pil
+            if ".png" in download_url:
+                rsp = Image.open(BytesIO(file.content)).convert("RGBA")
+                image = Image.new("RGB", size=rsp.size, color=(255, 255, 255, 255))
+                image.paste(rsp, mask=rsp.split()[3])
+            else:
+                image = Image.open(BytesIO(file.content)).convert("RGB")
+
+            # save the image file
+            image.save(
+                output_file,
+                "jpeg",  # save as jpeg,
+                quality=100,  # some images becomes blerd, so set it
+            )
+        except Exception as e:
+            print(e)
             # print only if set to TRUE
             if print_log:
                 print(
@@ -135,7 +150,7 @@ def cli():
             pl = True
 
         # start downloading
-        JPGDL.jpeg_download(
+        JPGDL.download(
             download_url=args.url,
             filename=args.filename,
             output_folder=args.output,
