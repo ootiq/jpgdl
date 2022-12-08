@@ -1,4 +1,4 @@
-certifi==2020.12.5
+certifi==2022.12.7
 h11==0.11.0
 httpcore==0.12.2
 httpx==0.16.1
